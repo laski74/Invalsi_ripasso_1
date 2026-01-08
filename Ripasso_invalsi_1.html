@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ripasso INVALSI - Matematica</title>
+    
+    <!-- Configurazione MathJax -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 3px solid #667eea;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            flex: 1;
+            min-width: 150px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #e0e0e0;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            color: #333;
+        }
+        
+        .tab:hover {
+            background: #d0d0d0;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 4px solid #667eea;
+        }
+        
+        .content {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s;
+        }
+        
+        .content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #764ba2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .formula-box {
+            background: #f0f4ff;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .error-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .tip-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        
+        li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .example {
+            background: #e8f5e9;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        strong {
+            color: #764ba2;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .tab { font-size: 0.9em; padding: 15px 10px; }
+            .content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Ripasso INVALSI - Matematica</h1>
+            <p class="subtitle">Istituto Tecnico - Classe Quinta</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="openTab(event, 'esponenziali')">Esponenziali e Logaritmi</button>
+            <button class="tab" onclick="openTab(event, 'trigonometria')">Trigonometria</button>
+            <button class="tab" onclick="openTab(event, 'coniche')">Coniche</button>
+            <button class="tab" onclick="openTab(event, 'errori')">Errori Comuni</button>
+        </div>
+        
+        <!-- SCHEDA 1: ESPONENZIALI E LOGARITMI -->
+        <div id="esponenziali" class="content active">
+            <h2>📊 Esponenziali e Logaritmi</h2>
+            
+            <h3>Proprietà delle Potenze</h3>
+            <div class="formula-box">
+                <ul>
+                    <li>$a^m \cdot a^n = a^{m+n}$</li>
+                    <li>$\frac{a^m}{a^n} = a^{m-n}$</li>
+                    <li>$(a^m)^n = a^{m \cdot n}$</li>
+                    <li>$(a \cdot b)^n = a^n \cdot b^n$</li>
+                    <li>$\left(\frac{a}{b}\right)^n = \frac{a^n}{b^n}$</li>
+                    <li>$a^0 = 1$ (con $a \neq 0$)</li>
+                    <li>$a^{-n} = \frac{1}{a^n}$</li>
+                    <li>$a^{\frac{1}{n}} = \sqrt[n]{a}$</li>
+                    <li>$a^{\frac{m}{n}} = \sqrt[n]{a^m} = (\sqrt[n]{a})^m$</li>
+                </ul>
+            </div>
+            
+            <h3>Funzione Esponenziale</h3>
+            <div class="formula-box">
+                <p><strong>Forma generale:</strong> $y = a^x$ con $a > 0$ e $a \neq 1$</p>
+                <ul>
+                    <li>Se $a > 1$: funzione <strong>crescente</strong></li>
+                    <li>Se $0 < a < 1$: funzione <strong>decrescente</strong></li>
+                    <li>Dominio: $\mathbb{R}$ (tutti i reali)</li>
+                    <li>Codominio: $(0, +\infty)$ (sempre positiva)</li>
+                    <li>Passa sempre per il punto $(0, 1)$</li>
+                    <li>Asintoto orizzontale: asse $x$ (y = 0)</li>
+                </ul>
+            </div>
+            
+            <h3>Logaritmi - Definizione</h3>
+            <div class="formula-box">
+                $$\log_a b = c \quad \Leftrightarrow \quad a^c = b$$
+                <p style="margin-top: 15px;"><strong>Condizioni di esistenza:</strong></p>
+                <ul>
+                    <li>Base: $a > 0$ e $a \neq 1$</li>
+                    <li>Argomento: $b > 0$</li>
+                </ul>
+            </div>
+            
+            <h3>Proprietà dei Logaritmi</h3>
+            <div class="formula-box">
+                <ol>
+                    <li><strong>Logaritmo di un prodotto:</strong> $\log_a(x \cdot y) = \log_a x + \log_a y$</li>
+                    <li><strong>Logaritmo di un quoziente:</strong> $\log_a\left(\frac{x}{y}\right) = \log_a x - \log_a y$</li>
+                    <li><strong>Logaritmo di una potenza:</strong> $\log_a(x^n) = n \cdot \log_a x$</li>
+                    <li><strong>Cambiamento di base:</strong> $\log_a b = \frac{\log_c b}{\log_c a}$</li>
+                    <li><strong>Logaritmo e base uguali:</strong> $\log_a a = 1$</li>
+                    <li><strong>Logaritmo di 1:</strong> $\log_a 1 = 0$</li>
+                    <li><strong>Formula inversa:</strong> $a^{\log_a x} = x$</li>
+                </ol>
+            </div>
+            
+            <h3>Equazioni Esponenziali</h3>
+            <div class="example">
+                <p><strong>Metodo 1 - Stessa base:</strong></p>
+                <p>$2^{x+1} = 8 \quad \Rightarrow \quad 2^{x+1} = 2^3 \quad \Rightarrow \quad x+1 = 3 \quad \Rightarrow \quad x = 2$</p>
+            </div>
+            
+            <div class="example">
+                <p><strong>Metodo 2 - Logaritmi:</strong></p>
+                <p>$3^x = 7 \quad \Rightarrow \quad \log(3^x) = \log 7 \quad \Rightarrow \quad x \log 3 = \log 7 \quad \Rightarrow \quad x = \frac{\log 7}{\log 3}$</p>
+            </div>
+            
+            <h3>Equazioni Logaritmiche</h3>
+            <div class="example">
+                <p><strong>Stesso logaritmo:</strong></p>
+                <p>$\log_2(x+1) = \log_2(3x-5)$</p>
+                <p><strong>C.E.:</strong> $x+1 > 0$ e $3x-5 > 0$ → $x > \frac{5}{3}$</p>
+                <p>$x+1 = 3x-5 \quad \Rightarrow \quad 2x = 6 \quad \Rightarrow \quad x = 3$ ✓</p>
+            </div>
+            
+            <div class="error-box">
+                <h4>⚠️ ERRORI COMUNI - Esponenziali e Logaritmi</h4>
+                <ul>
+                    <li><strong>SBAGLIATO:</strong> $\log(a+b) = \log a + \log b$ ❌
+                        <br><strong>GIUSTO:</strong> $\log(a \cdot b) = \log a + \log b$ ✓</li>
+                    <li><strong>SBAGLIATO:</strong> $(a^m)^n = a^{m+n}$ ❌
+                        <br><strong>GIUSTO:</strong> $(a^m)^n = a^{m \cdot n}$ ✓</li>
+                    <li><strong>SBAGLIATO:</strong> $a^{-n} = -a^n$ ❌
+                        <br><strong>GIUSTO:</strong> $a^{-n} = \frac{1}{a^n}$ ✓</li>
+                    <li><strong>Dimenticare le condizioni di esistenza dei logaritmi!</strong></li>
+                    <li><strong>SBAGLIATO:</strong> $\log_a(x^2) = 2\log_a|x|$ quando serve il valore assoluto</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- SCHEDA 2: TRIGONOMETRIA -->
+        <div id="trigonometria" class="content">
+            <h2>📐 Trigonometria</h2>
+            
+            <h3>Definizioni delle Funzioni Trigonometriche</h3>
+            <div class="formula-box">
+                <p>Nel triangolo rettangolo con angolo $\alpha$:</p>
+                $$\sin \alpha = \frac{\text{cateto opposto}}{\text{ipotenusa}}$$
+                $$\cos \alpha = \frac{\text{cateto adiacente}}{\text{ipotenusa}}$$
+                $$\tan \alpha = \frac{\text{cateto opposto}}{\text{cateto adiacente}} = \frac{\sin \alpha}{\cos \alpha}$$
+                $$\cot \alpha = \frac{1}{\tan \alpha} = \frac{\cos \alpha}{\sin \alpha}$$
+            </div>
+            
+            <h3>Angoli Notevoli</h3>
+            <table>
+                <tr>
+                    <th>Angolo</th>
+                    <th>0°</th>
+                    <th>30°</th>
+                    <th>45°</th>
+                    <th>60°</th>
+                    <th>90°</th>
+                </tr>
+                <tr>
+                    <th>Radianti</th>
+                    <td>0</td>
+                    <td>$\frac{\pi}{6}$</td>
+                    <td>$\frac{\pi}{4}$</td>
+                    <td>$\frac{\pi}{3}$</td>
+                    <td>$\frac{\pi}{2}$</td>
+                </tr>
+                <tr>
+                    <th>$\sin$</th>
+                    <td>0</td>
+                    <td>$\frac{1}{2}$</td>
+                    <td>$\frac{\sqrt{2}}{2}$</td>
+                    <td>$\frac{\sqrt{3}}{2}$</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <th>$\cos$</th>
+                    <td>1</td>
+                    <td>$\frac{\sqrt{3}}{2}$</td>
+                    <td>$\frac{\sqrt{2}}{2}$</td>
+                    <td>$\frac{1}{2}$</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <th>$\tan$</th>
+                    <td>0</td>
+                    <td>$\frac{\sqrt{3}}{3}$</td>
+                    <td>1</td>
+                    <td>$\sqrt{3}$</td>
+                    <td>∄</td>
+                </tr>
+            </table>
+            
+            <h3>Formule Fondamentali</h3>
+            <div class="formula-box">
+                <p><strong>Relazione fondamentale:</strong></p>
+                $$\sin^2 \alpha + \cos^2 \alpha = 1$$
+                
+                <p style="margin-top: 20px;"><strong>Conseguenze:</strong></p>
+                $$1 + \tan^2 \alpha = \frac{1}{\cos^2 \alpha}$$
+                $$1 + \cot^2 \alpha = \frac{1}{\sin^2 \alpha}$$
+            </div>
+            
+            <h3>Formule di Addizione e Sottrazione</h3>
+            <div class="formula-box">
+                <ul>
+                    <li>$\sin(\alpha + \beta) = \sin \alpha \cos \beta + \cos \alpha \sin \beta$</li>
+                    <li>$\sin(\alpha - \beta) = \sin \alpha \cos \beta - \cos \alpha \sin \beta$</li>
+                    <li>$\cos(\alpha + \beta) = \cos \alpha \cos \beta - \sin \alpha \sin \beta$</li>
+                    <li>$\cos(\alpha - \beta) = \cos \alpha \cos \beta + \sin \alpha \sin \beta$</li>
+                    <li>$\tan(\alpha + \beta) = \frac{\tan \alpha + \tan \beta}{1 - \tan \alpha \tan \beta}$</li>
+                </ul>
+            </div>
+            
+            <h3>Formule di Duplicazione</h3>
+            <div class="formula-box">
+                <ul>
+                    <li>$\sin(2\alpha) = 2 \sin \alpha \cos \alpha$</li>
+                    <li>$\cos(2\alpha) = \cos^2 \alpha - \sin^2 \alpha = 2\cos^2 \alpha - 1 = 1 - 2\sin^2 \alpha$</li>
+                    <li>$\tan(2\alpha) = \frac{2\tan \alpha}{1 - \tan^2 \alpha}$</li>
+                </ul>
+            </div>
+            
+            <h3>Formule di Bisezione</h3>
+            <div class="formula-box">
+                $$\sin \frac{\alpha}{2} = \pm \sqrt{\frac{1 - \cos \alpha}{2}}$$
+                $$\cos \frac{\alpha}{2} = \pm \sqrt{\frac{1 + \cos \alpha}{2}}$$
+                $$\tan \frac{\alpha}{2} = \frac{\sin \alpha}{1 + \cos \alpha} = \frac{1 - \cos \alpha}{\sin \alpha}$$
+            </div>
+            
+            <h3>Equazioni Trigonometriche Elementari</h3>
+            <div class="example">
+                <p><strong>$\sin x = k$ con $|k| \leq 1$</strong></p>
+                <p>Soluzione generale:</p>
+                $$x = \arcsin k + 2k\pi \quad \text{oppure} \quad x = \pi - \arcsin k + 2k\pi$$
+            </div>
+            
+            <div class="example">
+                <p><strong>$\cos x = k$ con $|k| \leq 1$</strong></p>
+                <p>Soluzione generale:</p>
+                $$x = \pm \arccos k + 2k\pi$$
+            </div>
+            
+            <div class="example">
+                <p><strong>$\tan x = k$ (per ogni $k \in \mathbb{R}$)</strong></p>
+                <p>Soluzione generale:</p>
+                $$x = \arctan k + k\pi$$
+            </div>
+            
+            <h3>Teoremi sui Triangoli</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Teorema dei Seni</h4>
+                    $$\frac{a}{\sin \alpha} = \frac{b}{\sin \beta} = \frac{c}{\sin \gamma} = 2R$$
+                    <p style="margin-top: 10px;">dove $R$ è il raggio della circonferenza circoscritta</p>
+                </div>
+                
+                <div class="card">
+                    <h4>Teorema del Coseno</h4>
+                    $$a^2 = b^2 + c^2 - 2bc \cos \alpha$$
+                    <p style="margin-top: 10px;">(generalizzazione del teorema di Pitagora)</p>
+                </div>
+            </div>
+            
+            <div class="error-box">
+                <h4>⚠️ ERRORI COMUNI - Trigonometria</h4>
+                <ul>
+                    <li><strong>SBAGLIATO:</strong> $\sin(2x) = 2\sin x$ ❌
+                        <br><strong>GIUSTO:</strong> $\sin(2x) = 2\sin x \cos x$ ✓</li>
+                    <li><strong>SBAGLIATO:</strong> $\sin^2 x = \sin(x^2)$ ❌
+                        <br><strong>GIUSTO:</strong> $\sin^2 x = (\sin x)^2$ ✓</li>
+                    <li><strong>Confondere gradi e radianti!</strong> Es: $\sin(30) \neq \sin(30°)$</li>
+                    <li><strong>SBAGLIATO:</strong> $\sin(\alpha + \beta) = \sin \alpha + \sin \beta$ ❌</li>
+                    <li><strong>Dimenticare che $\tan x$ non è definita per $x = \frac{\pi}{2} + k\pi$</strong></li>
+                    <li><strong>Non verificare se le soluzioni rientrano nell'intervallo richiesto</strong></li>
+                </ul>
+            </div>
+            
+            <div class="tip-box">
+                <h4>💡 TRUCCHI UTILI</h4>
+                <ul>
+                    <li>Per ricordare i valori: 30°-60°-90° forma triangolo con lati 1, $\sqrt{3}$, 2</li>
+                    <li>45°-45°-90° forma triangolo con lati 1, 1, $\sqrt{2}$</li>
+                    <li>$\sin$ è positivo nel I e II quadrante</li>
+                    <li>$\cos$ è positivo nel I e IV quadrante</li>
+                    <li>$\tan$ è positivo nel I e III quadrante</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- SCHEDA 3: CONICHE -->
+        <div id="coniche" class="content">
+            <h2>⭕ Coniche</h2>
+            
+            <h3>La Circonferenza</h3>
+            <div class="formula-box">
+                <p><strong>Definizione:</strong> Luogo dei punti del piano equidistanti da un punto fisso detto <strong>centro</strong>.</p>
+                
+                <p style="margin-top: 20px;"><strong>Equazione con centro $C(x_0, y_0)$ e raggio $r$:</strong></p>
+                $$(x - x_0)^2 + (y - y_0)^2 = r^2$$
+                
+                <p style="margin-top: 20px;"><strong>Equazione in forma generale:</strong></p>
+                $$x^2 + y^2 + ax + by + c = 0$$
+                
+                <p style="margin-top: 15px;">dove:</p>
+                <ul>
+                    <li>Centro: $C\left(-\frac{a}{2}, -\frac{b}{2}\right)$</li>
+                    <li>Raggio: $r = \sqrt{\frac{a^2}{4} + \frac{b^2}{4} - c}$</li>
+                </ul>
+            </div>
+            
+            <div class="warning-box">
+                <p><strong>⚠️ Condizione di esistenza:</strong> $\frac{a^2}{4} + \frac{b^2}{4} - c > 0$</p>
+                <ul>
+                    <li>Se $= 0$ → circonferenza degenere (punto)</li>
+                    <li>Se $< 0$ → non esiste (insieme vuoto)</li>
+                </ul>
+            </div>
+            
+            <h3>La Parabola</h3>
+            <div class="formula-box">
+                <p><strong>Definizione:</strong> Luogo dei punti del piano equidistanti da un punto fisso detto <strong>fuoco</strong> e da una retta fissa detta <strong>direttrice</strong>.</p>
+                
+                <p style="margin-top: 20px;"><strong>Parabola con asse parallelo all'asse $y$:</strong></p>
+                $$y = ax^2 + bx + c$$
+                
+                <ul style="margin-top: 15px;">
+                    <li><strong>Vertice:</strong> $V\left(-\frac{b}{2a}, -\frac{\Delta}{4a}\right)$ dove $\Delta = b^2 - 4ac$</li>
+                    <li><strong>Asse di simmetria:</strong> $x = -\frac{b}{2a}$</li>
+                    <li><strong>Concavità:</strong> 
+                        <ul>
+                            <li>Se $a > 0$ → verso l'alto (∪)</li>
+                            <li>Se $a < 0$ → verso il basso (∩)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Fuoco:</strong> $F\left(-\frac{b}{2a}, -\frac{\Delta - 1}{4a}\right)$</li>
+                    <li><strong>Direttrice:</strong> $y = -\frac{\Delta + 1}{4a}$</li>
+                </ul>
+                
+                <p style="margin-top: 20px;"><strong>Parabola con asse parallelo all'asse $x$:</strong></p>
+                $$x = ay^2 + by + c$$
+            </div>
+            
+            <div class="example">
+                <p><strong>Intersezioni con gli assi:</strong></p>
+                <ul>
+                    <li><strong>Asse $y$:</strong> pongo $x = 0$ → $y = c$</li>
+                    <li><strong>Asse $x$:</strong> pongo $y = 0$ → $ax^2 + bx + c = 0$
+                        <ul>
+                            <li>Se $\Delta > 0$ → due punti</li>
+                            <li>Se $\Delta = 0$ → un punto (tangente)</li>
+                            <li>Se $\Delta < 0$ → nessun punto</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <h3>L'Ellisse</h3>
+            <div class="formula-box">
+                <p><strong>Definizione:</strong> Luogo dei punti del piano per cui è costante la somma delle distanze da due punti fissi detti <strong>fuochi</strong>.</p>
+                
+                <p style="margin-top: 20px;"><strong>Equazione canonica (centro nell'origine):</strong></p>
+                $$\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$$
+                
+                <p style="margin-top: 15px;">Con $a > b > 0$:</p>
+                <ul>
+                    <li><strong>Semiasse maggiore:</strong> $a$ (sull'asse $x$)</li>
+                    <li><strong>Semiasse minore:</strong> $b$ (sull'asse $y$)</li>
+                    <li><strong>Fuochi:</strong> $F_1(-c, 0)$ e $F_2(c, 0)$ dove $c = \sqrt{a^2 - b^2}$</li>
+                    <li><strong>Eccentricità:</strong> $e = \frac{c}{a}$ con $0 < e < 1$</li>
+                    <li><strong>Vertici:</strong> $(\pm a, 0)$ e $(0, \pm b)$</li>
+                </ul>
+                
+                <p style="margin-top: 20px;"><strong>Se $b > a$:</strong> asse maggiore verticale, fuochi su asse $y$</p>
+                $$\frac{x^2}{b^2} + \frac{y^2}{a^2} = 1 \quad \text{con fuochi } (0, \pm c)$$
+            </div>
+            
+            <div class="formula-box">
+                <p><strong>Equazione con centro in $C(x_0, y_0)$:</strong></p>
+                $$\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$$
+            </div>
+            
+            <h3>L'Iperbole</h3>
+            <div class="formula-box">
+                <p><strong>Definizione:</strong> Luogo dei punti del piano per cui è costante la <strong>differenza</strong> (in valore assoluto) delle distanze da due punti fissi detti <strong>fuochi</strong>.</p>
+                
+                <p style="margin-top: 20px;"><strong>Equazione canonica (centro nell'origine):</strong></p>
+                $$\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$$
+                
+                <ul style="margin-top: 15px;">
+                    <li><strong>Vertici reali:</strong> $V_1(-a, 0)$ e $V_2(a, 0)$</li>
+                    <li><strong>Fuochi:</strong> $F_1(-c, 0)$ e $F_2(c, 0)$ dove $c = \sqrt{a^2 + b^2}$</li>
+                    <li><strong>Asintoti:</strong> $y = \pm \frac{b}{a}x$</li>
+                    <li><strong>Eccentricità:</strong> $e = \frac{c}{a}$ con $e > 1$</li>
+                </ul>
+                
+                <p style="margin-top: 20px;"><strong>Iperbole con fuochi sull'asse $y$:</strong></p>
+                $$\frac{y^2}{a^2} - \frac{x^2}{b^2} = 1$$
+            </div>
+            
+            <div class="formula-box">
+                <p><strong>Iperbole equilatera (asintoti perpendicolari):</strong></p>
+                <p>Condizione: $a = b$</p>
+                $$x^2 - y^2 = a^2 \quad \text{asintoti: } y = \pm x$$
+                
+                <p style="margin-top: 20px;"><strong>Iperbole equilatera riferita agli asintoti:</strong></p>
+                $$xy = k$$
+                <ul>
+                    <li>Se $k > 0$: rami nel I e III quadrante</li>
+                    <li>Se $k < 0$: rami nel II e IV quadrante</li>
+                </ul>
+            </div>
+            
+            <h3>Riepilogo Coniche</h3>
+            <table>
+                <tr>
+                    <th>Conica</th>
+                    <th>Equazione</th>
+                    <th>Eccentricità</th>
+                    <th>Caratteristica</th>
+                </tr>
+                <tr>
+                    <td><strong>Circonferenza</strong></td>
+                    <td>$(x-x_0)^2 + (y-y_0)^2 = r^2$</td>
+                    <td>$e = 0$</td>
+                    <td>Curva chiusa simmetrica</td>
+                </tr>
+                <tr>
+                    <td><strong>Ellisse</strong></td>
+                    <td>$\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$</td>
+                    <td>$0 < e < 1$</td>
+                    <td>Curva chiusa, somma costante</td>
+                </tr>
+                <tr>
+                    <td><strong>Parabola</strong></td>
+                    <td>$y = ax^2 + bx + c$</td>
+                    <td>$e = 1$</td>
+                    <td>Curva aperta con un vertice</td>
+                </tr>
+                <tr>
+                    <td><strong>Iperbole</strong></td>
+                    <td>$\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$</td>
+                    <td>$e > 1$</td>
+                    <td>Due rami, differenza costante</td>
+                </tr>
+            </table>
+            
+            <div class="error-box">
+                <h4>⚠️ ERRORI COMUNI - Coniche</h4>
+                <ul>
+                    <li><strong>CIRCONFERENZA:</strong> Dimenticare di calcolare il raggio prima di verificare l'esistenza</li>
+                    <li><strong>PARABOLA:</strong> Confondere il segno di $a$ con la concavità
+                        <br>→ $a > 0$ verso l'alto, $a < 0$ verso il basso</li>
+                    <li><strong>ELLISSE:</strong> Confondere quale sia il semiasse maggiore
+                        <br>→ Il maggiore è sempre sotto il denominatore più grande!</li>
+                    <li><strong>IPERBOLE:</strong> Sbagliare la formula di $c$
+                        <br>❌ $c = \sqrt{a^2 - b^2}$ (ellisse)
+                        <br>✓ $c = \sqrt{a^2 + b^2}$ (iperbole)</li>
+                    <li><strong>Non riconoscere l'equazione dalla forma:</strong>
+                        <br>→ Somma ($+$) = ellisse/circonferenza
+                        <br>→ Differenza ($-$) = iperbole</li>
+                    <li><strong>Dimenticare che in $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$ serve $a^2$ e $b^2$, non $a$ e $b$</strong></li>
+                </ul>
+            </div>
+            
+            <div class="tip-box">
+                <h4>💡 COME RICONOSCERE UNA CONICA</h4>
+                <p>Data l'equazione generale: $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$</p>
+                <ul>
+                    <li>Se $B = 0$ e $A = C$ → <strong>Circonferenza</strong></li>
+                    <li>Se $B = 0$, $A \neq C$ e stesso segno → <strong>Ellisse</strong></li>
+                    <li>Se $B = 0$ e uno tra $A$ o $C$ è zero → <strong>Parabola</strong></li>
+                    <li>Se $B = 0$, $A$ e $C$ hanno segno opposto → <strong>Iperbole</strong></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- SCHEDA 4: ERRORI COMUNI -->
+        <div id="errori" class="content">
+            <h2>🚨 Errori Comuni e Come Evitarli</h2>
+            
+            <div class="error-box">
+                <h3>1. Algebra delle Potenze</h3>
+                <table style="background: white;">
+                    <tr>
+                        <th>SBAGLIATO ❌</th>
+                        <th>GIUSTO ✓</th>
+                    </tr>
+                    <tr>
+                        <td>$(a + b)^2 = a^2 + b^2$</td>
+                        <td>$(a + b)^2 = a^2 + 2ab + b^2$</td>
+                    </tr>
+                    <tr>
+                        <td>$(ab)^n = a^n b$</td>
+                        <td>$(ab)^n = a^n b^n$</td>
+                    </tr>
+                    <tr>
+                        <td>$a^m \cdot a^n = a^{mn}$</td>
+                        <td>$a^m \cdot a^n = a^{m+n}$</td>
+                    </tr>
+                    <tr>
+                        <td>$\sqrt{a^2 + b^2} = a + b$</td>
+                        <td>$\sqrt{a^2 + b^2}$ NON si semplifica</td>
+                    </tr>
+                    <tr>
+                        <td>$\frac{a+b}{c} = a + \frac{b}{c}$</td>
+                        <td>$\frac{a+b}{c} = \frac{a}{c} + \frac{b}{c}$</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="error-box">
+                <h3>2. Logaritmi</h3>
+                <table style="background: white;">
+                    <tr>
+                        <th>SBAGLIATO ❌</th>
+                        <th>GIUSTO ✓</th>
+                    </tr>
+                    <tr>
+                        <td>$\log(a + b) = \log a + \log b$</td>
+                        <td>$\log(a \cdot b) = \log a + \log b$</td>
+                    </tr>
+                    <tr>
+                        <td>$\log(a - b) = \log a - \log b$</td>
+                        <td>$\log\left(\frac{a}{b}\right) = \log a - \log b$</td>
+                    </tr>
+                    <tr>
+                        <td>$\log_a b \cdot \log_a c = \log_a(b+c)$</td>
+                        <td>$\log_a b + \log_a c = \log_a(bc)$</td>
+                    </tr>
+                    <tr>
+                        <td>$(\log a)^2 = \log(a^2)$</td>
+                        <td>$\log(a^2) = 2\log a$</td>
+                    </tr>
+                    <tr>
+                        <td>$\log x$ definito per $x \in \mathbb{R}$</td>
+                        <td>$\log x$ definito solo per $x > 0$</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="error-box">
+                <h3>3. Trigonometria</h3>
+                <table style="background: white;">
+                    <tr>
+                        <th>SBAGLIATO ❌</th>
+                        <th>GIUSTO ✓</th>
+                    </tr>
+                    <tr>
+                        <td>$\sin(a + b) = \sin a + \sin b$</td>
+                        <td>$\sin(a+b) = \sin a \cos b + \cos a \sin b$</td>
+                    </tr>
+                    <tr>
+                        <td>$\cos(2a) = 2\cos a$</td>
+                        <td>$\cos(2a) = \cos^2 a - \sin^2 a$</td>
+                    </tr>
+                    <tr>
+                        <td>$\sin(2a) = 2\sin a$</td>
+                        <td>$\sin(2a) = 2\sin a \cos a$</td>
+                    </tr>
+                    <tr>
+                        <td>$\tan a = \frac{\cos a}{\sin a}$</td>
+                        <td>$\tan a = \frac{\sin a}{\cos a}$</td>
+                    </tr>
+                    <tr>
+                        <td>$\sin^2 a = \sin(a^2)$</td>
+                        <td>$\sin^2 a = (\sin a)^2$</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="warning-box">
+                <h3>4. Strategie per Evitare Errori</h3>
+                <ol>
+                    <li><strong>Verifica dimensionale:</strong> Controlla che le unità di misura tornino</li>
+                    <li><strong>Casi limite:</strong> Prova con valori semplici (0, 1, -1) per verificare formule</li>
+                    <li><strong>Condizioni di esistenza:</strong> SEMPRE verificare dominio e condizioni
+                        <ul>
+                            <li>Denominatori diversi da zero</li>
+                            <li>Radici di indice pari con radicando ≥ 0</li>
+                            <li>Logaritmi con argomento > 0 e base > 0, ≠ 1</li>
+                        </ul>
+                    </li>
+                    <li><strong>Attenzione ai segni:</strong> Nei quadrati e nelle potenze pari</li>
+                    <li><strong>Rileggi il testo:</strong> Verifica cosa chiede davvero il problema</li>
+                </ol>
+            </div>
+            
+            <div class="tip-box">
+                <h3>💡 Checklist Pre-Esame INVALSI</h3>
+                <ul>
+                    <li>✓ Calcolatrice funzionante (se permessa)</li>
+                    <li>✓ Ripassa gli angoli notevoli (30°, 45°, 60°)</li>
+                    <li>✓ Ricorda le formule di base (non sempre sono fornite)</li>
+                    <li>✓ Fai attenzione alle unità di misura</li>
+                    <li>✓ Leggi bene il testo prima di rispondere</li>
+                    <li>✓ Verifica sempre le C.E. (condizioni di esistenza)</li>
+                    <li>✓ Controlla che la risposta abbia senso nel contesto</li>
+                    <li>✓ Gestisci il tempo: non bloccarti su un esercizio</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>📝 Metodo di Studio Efficace</h3>
+                <ol>
+                    <li><strong>Identifica l'argomento:</strong> Cosa chiede l'esercizio?</li>
+                    <li><strong>Scrivi i dati:</strong> Cosa so?</li>
+                    <li><strong>Individua l'obiettivo:</strong> Cosa devo trovare?</li>
+                    <li><strong>Verifica le C.E.:</strong> Ci sono condizioni da rispettare?</li>
+                    <li><strong>Scegli la strategia:</strong> Quale formula/metodo usare?</li>
+                    <li><strong>Risolvi con ordine:</strong> Passa dopo passo</li>
+                    <li><strong>Verifica il risultato:</strong> Ha senso? Sostituisci per controllare</li>
+                </ol>
+            </div>
+            
+            <div class="formula-box">
+                <h3>🎯 Formule da Memorizzare Assolutamente</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Potenze</h4>
+                        <ul>
+                            <li>$a^m \cdot a^n = a^{m+n}$</li>
+                            <li>$(a^m)^n = a^{mn}$</li>
+                            <li>$a^{-n} = \frac{1}{a^n}$</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>Logaritmi</h4>
+                        <ul>
+                            <li>$\log(xy) = \log x + \log y$</li>
+                            <li>$\log(x^n) = n\log x$</li>
+                            <li>$\log_a a = 1$</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>Trigonometria</h4>
+                        <ul>
+                            <li>$\sin^2 x + \cos^2 x = 1$</li>
+                            <li>$\sin(2x) = 2\sin x\cos x$</li>
+                            <li>$\tan x = \frac{\sin x}{\cos x}$</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>Parabola</h4>
+                        <ul>
+                            <li>$y = ax^2 + bx + c$</li>
+                            <li>$V_x = -\frac{b}{2a}$</li>
+                            <li>$\Delta = b^2 - 4ac$</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openTab(evt, tabName) {
+            // Nascondi tutti i contenuti
+            var contents = document.getElementsByClassName("content");
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            
+            // Rimuovi la classe active da tutti i tab
+            var tabs = document.getElementsByClassName("tab");
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            // Mostra il contenuto selezionato e marca il tab come attivo
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // Scroll to top
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            
+            // Ricarica MathJax per il nuovo contenuto
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise();
+            }
+        }
+    </script>
+</body>
+</html>
